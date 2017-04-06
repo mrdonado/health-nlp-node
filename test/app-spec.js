@@ -15,11 +15,18 @@ describe('App initialization ', () => {
         it('beanstalkd should expect a known event',
           () => {
             expect(['connect', 'error', 'close']).to.contain(event);
+            expect(typeof cb).to.equal('function');
+            expect(typeof cb()).to.equal('undefined');
           });
         return this;
       };
       this.connect = () => {
         return this;
+      };
+      this.use = (tube, cb) => {
+        expect(tube).to.equal('default');
+        expect(typeof cb).to.equal('function');
+        expect(typeof cb()).to.equal('undefined');
       };
       return this;
     }
@@ -39,7 +46,23 @@ describe('App initialization ', () => {
         .get('/nonexistingroute')
         .end((err, res) => {
           expect(res.status).to.equal(404);
+          expect(res.body.status).to.equal(404);
+          expect(res.error.message).to.equal("cannot GET /nonexistingroute (404)");
           done();
         });
     });
+
+  it('should not return an error message when the environment is not development',
+    (done) => {
+      app.set('env', 'production');
+      chai.request(app)
+        .get('/nonexistingroute')
+        .end((err, res) => {
+          expect(res.status).to.equal(404);
+          expect(typeof res.body.status).to.equal('undefined');
+          expect(res.error.message).to.equal("cannot GET /nonexistingroute (404)");
+          done();
+        });
+    });
+
 });
