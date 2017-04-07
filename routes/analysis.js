@@ -6,7 +6,7 @@ const express = require('express'),
  * to save the jobs in the jobs queue.
  * @param {Object} beanstalkd Active connection to beanstalkd, fivebeans based.
  */
-module.exports = (beanstalkd) => {
+module.exports = function (beanstalkd) {
   /* POST a new analysis. */
   router.post('/', function (req, res, next) {
     let analysis = Object.assign({}, req.body);
@@ -14,7 +14,7 @@ module.exports = (beanstalkd) => {
     beanstalkd.put(0, 0, 60, JSON.stringify(analysis),
       function (err, jobid) {
         res.json({
-          message: 'Analysis received',
+          message: 'Job received',
           data: analysis
         })
       })
