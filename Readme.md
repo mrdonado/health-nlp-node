@@ -9,9 +9,10 @@ The ***health-nlp*** project is an NLP (Natural Language Processing) demo compos
 
 This project is still on an early stage of development. As soon as there's an online demo available, you'll find a link here.
 
+
 ## Get this thing running
 
-This project contains a Python program that takes jobs from a beanstalkd service, sends them to the analyzer and posts the results to firebase. Follow these steps in order to run it on your machine.
+This project contains a nodeJS/Express app that gets jobs via a REST API and inserts them into a beanstalkd queue.
 
 ### Beanstalkd
 
