@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/fjrd84/health-nlp-node.svg?branch=master)](https://travis-ci.org/fjrd84/health-nlp-node)
+[![Build Status](https://travis-ci.org/fjrd84/health-nlp-node.svg?branch=master)](https://travis-ci.org/fjrd84/health-nlp-node) [![Coverage Status](https://coveralls.io/repos/github/fjrd84/health-nlp-node/badge.svg?branch=master)](https://coveralls.io/github/fjrd84/health-nlp-node?branch=master)
 
 # health-nlp-node
 
