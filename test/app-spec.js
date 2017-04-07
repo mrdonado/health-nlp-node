@@ -28,6 +28,7 @@ describe('App initialization ', () => {
         expect(typeof cb).to.equal('function');
         expect(typeof cb()).to.equal('undefined');
       };
+      this.put = (a, b, c, d, cb) => { cb(); };
       return this;
     }
   });
