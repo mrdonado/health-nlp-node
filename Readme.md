@@ -1,4 +1,7 @@
+[![Build Status](https://travis-ci.org/fjrd84/health-nlp-node.svg?branch=master)](https://travis-ci.org/fjrd84/health-nlp-node)
+
 # health-nlp-node
+
 This repository contains the nodeJS/express based web server of the ***health-nlp*** project.
 
 The ***health-nlp*** project is an NLP (Natural Language Processing) demo composed by the following repositories:
