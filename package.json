@@ -6,7 +6,8 @@
     "start": "node ./bin/www",
     "test": "mocha test --recursive",
     "test-watch": "mocha test --recursive --watch",
-    "coverage": "istanbul cover _mocha test --recursive"
+    "coverage": "istanbul cover _mocha test --recursive",
+    "coveralls": "cat ./coverage/lcov.info | node node_modules/.bin/coveralls"
   },
   "dependencies": {
     "body-parser": "~1.17.1",
@@ -20,6 +21,7 @@
   "devDependencies": {
     "chai": "^3.5.0",
     "chai-http": "^3.0.0",
+    "coveralls": "^2.13.0",
     "istanbul": "^0.4.5",
     "mocha": "^3.2.0",
     "mock-require": "^2.0.2",
