@@ -6,7 +6,7 @@ const express = require('express');
  * @param {Object} beanstalkd Active connection to beanstalkd, fivebeans based.
  */
 module.exports = function (beanstalkd) {
-  router = express.Router();
+  const router = express.Router();
   /* POST a new analysis. */
   router.post('/', function (req, res, next) {
     let analysis = Object.assign({}, req.body);
