@@ -6,7 +6,7 @@
     "start": "node ./bin/www",
     "test": "mocha test --recursive",
     "test-watch": "mocha test --recursive --watch",
-    "coverage": "istanbul cover _mocha test --recursive",
+    "coverage": "istanbul cover _mocha test -- --recursive",
     "coveralls": "cat ./coverage/lcov.info | node node_modules/.bin/coveralls"
   },
   "dependencies": {
