@@ -53,15 +53,16 @@ describe('App initialization ', () => {
         });
     });
 
-  it('should not return an error message when the environment is not development',
+  it('should not return an error message when the environment is not development or test',
     (done) => {
-      app.set('env', 'production');
+      process.env.NODE_ENV = 'production';
       chai.request(app)
         .get('/nonexistingroute')
         .end((err, res) => {
           expect(res.status).to.equal(404);
           expect(typeof res.body.status).to.equal('undefined');
           expect(res.error.message).to.equal("cannot GET /nonexistingroute (404)");
+          process.env.NODE_ENV = 'test';
           done();
         });
     });
