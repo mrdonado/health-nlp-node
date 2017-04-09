@@ -4,7 +4,9 @@
  * It initializes the logger for the app.
  * 
  */
-log4js = require('log4js'); /* From https://www.npmjs.com/package/log4js */
+const log4js = require('log4js'), /* From https://www.npmjs.com/package/log4js */
+    config = require('./configuration');
+
 
 // Don't log to a file while unit testing
 if (process.env.NODE_ENV !== 'test') {
@@ -14,7 +16,7 @@ if (process.env.NODE_ENV !== 'test') {
 }
 
 var logger = log4js.getLogger('app');
-logger.setLevel('ERROR');
+logger.setLevel(config.errorLevel);
 
 /**
  * Use examples, from the documentation:
