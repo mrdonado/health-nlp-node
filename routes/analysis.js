@@ -1,4 +1,5 @@
-const express = require('express');
+const express = require('express'),
+  log = require('../boot/logger');
 
 /**
  * An active connection to beanstalkd must be injected in order
@@ -9,14 +10,17 @@ module.exports = function (beanstalkd) {
   const router = express.Router();
   /* POST a new analysis. */
   router.post('/', function (req, res, next) {
-    let analysis = Object.assign({}, req.body);
-    analysis.created_at = (new Date()).toISOString();
-    beanstalkd.put(0, 0, 60, JSON.stringify(analysis),
+    log.debug('POST to /analysis');
+    let job = Object.assign({}, req.body);
+    log.info('Job: ' + JSON.stringify(job));
+    job.created_at = (new Date()).toISOString();
+    beanstalkd.put(0, 0, 60, JSON.stringify(job),
       function (err, jobid) {
         res.json({
           message: 'Job received',
-          data: analysis
+          data: job
         })
+        log.trace('Job inserted into the beanstalkd queue.');
       })
   });
   return router;

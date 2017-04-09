@@ -19,6 +19,8 @@ const express = require('express'),
   log = require('./boot/logger'),
   app = express();
 
+log.trace('Start initialization.');
+log.debug('Configuration parameters: ' + JSON.stringify(config));
 // Initialize the connection with beanstalkd
 const beanstalkd = new fivebeans.client(config.beanstalkd.host, config.beanstalkd.port);
 
@@ -34,7 +36,6 @@ beanstalkd
     log.info('Connection to beanstalkd closed: ' + config.beanstalkd.host + ':' + config.beanstalkd.port);
   })
   .connect();
-
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -46,6 +47,7 @@ app.use('/analysis', analysis(beanstalkd));
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
+  log.warn('Catch 404 error.');
   var err = new Error('Not Found');
   err.status = 404;
   next(err);
