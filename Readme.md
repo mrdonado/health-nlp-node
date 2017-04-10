@@ -1,4 +1,16 @@
-[![Build Status](https://travis-ci.org/fjrd84/health-nlp-node.svg?branch=master)](https://travis-ci.org/fjrd84/health-nlp-node) [![Coverage Status](https://coveralls.io/repos/github/fjrd84/health-nlp-node/badge.svg?branch=master)](https://coveralls.io/github/fjrd84/health-nlp-node?branch=master)
+[![Build Status][travis-badge]][travis-badge-url]
+[![Coverage Status][coveralls-badge]][coveralls-badge-url]
+[![Dependency Status][david-badge]][david-badge-url]
+[![devDependency Status][david-dev-badge]][david-dev-badge-url]
+
+[travis-badge]: https://travis-ci.org/fjrd84/health-nlp-node.svg?branch=master
+[travis-badge-url]: https://travis-ci.org/fjrd84/health-nlp-node
+[coveralls-badge]: https://coveralls.io/repos/github/fjrd84/health-nlp-node/badge.svg?branch=master
+[coveralls-badge-url]: https://coveralls.io/github/fjrd84/health-nlp-node?branch=master
+[david-badge]: https://david-dm.org/fjrd84/health-nlp-node.svg
+[david-badge-url]: https://david-dm.org/fjrd84/health-nlp-node
+[david-dev-badge]: https://david-dm.org/fjrd84/health-nlp-node/dev-status.svg
+[david-dev-badge-url]: https://david-dm.org/fjrd84/health-nlp-node?type=dev
 
 # health-nlp-node
 
