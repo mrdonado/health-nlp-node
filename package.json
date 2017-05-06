@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
+    "start-pm2": "pm2 start --no-daemon ./bin/www",
     "test": "NODE_ENV=test mocha test --recursive",
     "test-watch": "NODE_ENV=test mocha test --recursive --watch",
     "coverage": "NODE_ENV=test istanbul cover _mocha test -- --recursive",
@@ -27,6 +28,7 @@
     "istanbul": "^0.4.5",
     "mocha": "^3.2.0",
     "mock-require": "^2.0.2",
+    "pm2": "^2.4.6",
     "supertest": "^3.0.0"
   }
 }

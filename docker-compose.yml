@@ -1,0 +1,20 @@
+version: '2'
+services:
+  health-node:
+    build: .
+    container_name: health-node
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    ports:
+      - "3000:3000"
+    environment:
+      - BEANSTALKD_HOST=beanstalksvc
+      - NODE_ENV=production
+    networks:
+      - health-nlp-network
+
+networks:
+  health-nlp-network:
+    external:
+      name: health-nlp-network 
