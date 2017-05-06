@@ -8,7 +8,6 @@ dotenv.load();
 
 const express = require('express'),
   path = require('path'),
-  favicon = require('serve-favicon'),
   logger = require('morgan'),
   cookieParser = require('cookie-parser'),
   bodyParser = require('body-parser'),
@@ -36,6 +35,16 @@ beanstalkd
     log.info('Connection to beanstalkd closed: ' + config.beanstalkd.host + ':' + config.beanstalkd.port);
   })
   .connect();
+
+//CORS middleware
+var allowCrossDomain = function (req, res, next) {
+  res.header('Access-Control-Allow-Origin', config.cors.allowedOrigin);
+  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST');
+  res.header('Access-Control-Allow-Headers', 'Content-Type');
+  next();
+};
+
+app.use(allowCrossDomain);
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
