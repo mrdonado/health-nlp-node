@@ -29,25 +29,11 @@ This project is still on an early stage of development. As soon as there's an on
 
 This project contains a nodeJS/Express app that gets jobs via a REST API and inserts them into a beanstalkd queue.
 
-### Beanstalkd
+### Beanstalkd and the analyzer
 
-The first thing you need is a beanstalkd service.
+This project depends on beanstalkd and the health-nlp-analyzer. You can find more information about how to set up your environment and run such services on the [health-nlp-analysis's readme](https://github.com/fjrd84/health-nlp-analysis).
 
-If you have docker on your system just type `make runqueuedocker` in order to start a dockerized beanstalkd queue.
-
-If you want to install it locally on your system, and you are running a debian based linux distribution, you can install beanstalkd by typing this on the console:
-
-`sudo apt-get install beanstalkd`.
-
-If you're using MacOSX or another linux distribution, just follow the [instructions on the official documentation](http://kr.github.io/beanstalkd/download.html).
-
-In order to start the beanstalkd service, you can type this on the shell:
-
-`beanstalkd -l 127.0.0.1 -p 11300`
-
-Alternatively, `npm run queue` runs exactly that command.
-
-By default, we're using port `11300` and IP `127.0.0.1`. You can change this in the `config.ini` file.
+By default, we're using port `11300`, IP `127.0.0.1` and the default pipe on beanstalkd. You can change this in the `.env` file.
 
 ### NPM Dependencies
 
