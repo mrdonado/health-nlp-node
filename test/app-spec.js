@@ -33,7 +33,15 @@ describe('App initialization ', () => {
     }
   });
 
-  // With a mocked instance of fivebeans
+  mockRequire('../boot/logger', {
+    trace: () => { },
+    debug: () => { },
+    info: () => { },
+    warn: () => { },
+    error: () => { }
+  });
+
+  // With a mocked instance of fivebeans and the logger
   const app = require('../app');
 
   it('should create the app', (done) => {
@@ -66,5 +74,9 @@ describe('App initialization ', () => {
           done();
         });
     });
+
+  after('stop mock requires', () => {
+    mockRequire.stopAll();
+  });
 
 });
