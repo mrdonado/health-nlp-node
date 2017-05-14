@@ -10,6 +10,12 @@ let configuration = {
     cors: {
         allowedOrigin: process.env.ALLOWED_ORIGIN || 'http://localhost:4200'
     },
+    twitter: {
+        consumerKey: process.env.CONSUMER_KEY,
+        consumerSecret: process.env.CONSUMER_SECRET,
+        accessTokenKey: process.env.ACCESS_TOKEN_KEY,
+        accessTokenSecret: process.env.ACCESS_TOKEN_SECRET
+    },
     errorLevel: process.env.ERROR_LEVEL || 'trace'
 };
 
