@@ -41,7 +41,7 @@ In order to install the dependencies, you can simply type `npm install`.
 
 ### Configuration
 
-TODO
+Rename the `example.env` file into `.env` and modify the default values according to your system configuration.
 
 ### Run it!
 
@@ -53,7 +53,7 @@ You can run the tests by typing this on the console:
 
 `npm test`
 
-And the you can generate the coverage report with:
+And you can generate the coverage report with:
 
 `npm coverage`
 
