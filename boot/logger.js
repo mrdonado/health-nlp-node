@@ -7,13 +7,9 @@
 const log4js = require('log4js'), /* From https://www.npmjs.com/package/log4js */
     config = require('./configuration');
 
-
-// Don't log to a file while unit testing
-if (process.env.NODE_ENV !== 'test') {
-    // Only one log file will be used
-    log4js.loadAppender('file');
-    log4js.addAppender(log4js.appenders.file('logs/app.log'), 'app');
-}
+// Only one log file will be used
+log4js.loadAppender('file');
+log4js.addAppender(log4js.appenders.file('logs/app.log'), 'app');
 
 var logger = log4js.getLogger('app');
 logger.setLevel(config.errorLevel);
