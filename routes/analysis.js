@@ -19,9 +19,9 @@ module.exports = function (beanstalkd) {
         res.json({
           message: 'Job received',
           data: job
-        })
+        });
         log.trace('Job inserted into the beanstalkd queue.');
-      })
+      });
   });
   return router;
 };
