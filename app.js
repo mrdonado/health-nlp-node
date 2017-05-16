@@ -27,7 +27,7 @@ beanstalkd
   .on('connect', function () {
     beanstalkd.use('default', function (err, name) {
       log.info('Connected to beanstalkd: ' + config.beanstalkd.host + ':' + config.beanstalkd.port);
-    })
+    });
   }).on('error', function (err) {
     log.error('Error while connecting to beanstalkd: ' + config.beanstalkd.host + ':' + config.beanstalkd.port + ' ' + err);
   })
