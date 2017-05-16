@@ -3,6 +3,7 @@ dotenv.load();
 
 const config = require('./configuration'),
   fs = require('fs'),
+  log = require('./logger'),
   Twitter = require('twitter');
 
 const getTwitterClient = (Twitter, config) => {
@@ -32,7 +33,7 @@ const parseFile = (wordsFileName) => {
     fs.readFile(wordsFileName, (err, data) => {
       if (err) { return reject(err); }
       resolve(parseWords(data));
-    })
+    });
   });
 };
 
@@ -49,11 +50,11 @@ const dataCb = (words) => {
     };
     console.log(JSON.stringify(job));
     //beanstalkd.put(0, 0, 60, JSON.stringify(job));
-  }
+  };
 };
 
 const errorCb = function (error) {
-  throw error;
+  log.error('Twitter stream error:' + error.toString());
 };
 
 const startStream = (words) => {
