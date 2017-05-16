@@ -1,10 +1,4 @@
-const dotenv = require('dotenv');
-dotenv.load();
-
-const config = require('./configuration'),
-  fs = require('fs'),
-  log = require('./logger'),
-  Twitter = require('twitter');
+const log = require('./logger');
 
 const getTwitterClient = (Twitter, config) => {
   return new Twitter({
@@ -28,7 +22,7 @@ const induceQuery = (text, words) => {
   }, '');
 };
 
-const parseFile = (wordsFileName) => {
+const parseFile = (fs, wordsFileName) => {
   return new Promise((resolve, reject) => {
     fs.readFile(wordsFileName, (err, data) => {
       if (err) { return reject(err); }
@@ -37,9 +31,12 @@ const parseFile = (wordsFileName) => {
   });
 };
 
-const dataCb = (words) => {
+const dataCb = (beanstalkd, words) => {
   return (event) => {
     const query = induceQuery(event.text, words);
+    if (query === '' || event.lang !== 'en') {
+      return;
+    }
     const job = {
       'user_name': event.user.screen_name,
       'user_description': event.user.description,
@@ -48,8 +45,10 @@ const dataCb = (words) => {
       'source': 'twitter',
       'query': query
     };
-    console.log(JSON.stringify(job));
-    //beanstalkd.put(0, 0, 60, JSON.stringify(job));
+    beanstalkd.put(10, 1, 60, JSON.stringify(job),
+      (err, jobid) => {
+        //
+      });
   };
 };
 
@@ -57,14 +56,28 @@ const errorCb = function (error) {
   log.error('Twitter stream error:' + error.toString());
 };
 
-const startStream = (words) => {
-  const client = getTwitterClient(Twitter, config);
-  const stream = client.stream('statuses/filter', {
-    track: words.join(',')
-  });
-  stream.on('data', dataCb(words));
-  stream.on('error', errorCb);
+const startStream = (Twitter, beanstalkd, config) => {
+  return (words) => {
+    const client = getTwitterClient(Twitter, config);
+    const stream = client.stream('statuses/filter', {
+      track: words.join(',')
+    });
+    stream.on('data', dataCb(beanstalkd, words));
+    stream.on('error', errorCb);
+  };
 };
 
-parseFile('./boot/twitter-query-words.txt')
-  .then(startStream);
+
+module.exports = {
+  runTwitterStream: (Twitter, beanstalkd, fs, config) => {
+    parseFile(fs, './boot/twitter-query-words.txt')
+      .then(startStream(Twitter, beanstalkd, config));
+  },
+  startStream,
+  errorCb,
+  dataCb,
+  parseFile,
+  induceQuery,
+  parseWords,
+  getTwitterClient
+};
