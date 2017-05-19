@@ -9,7 +9,8 @@ const mocha = require('mocha'),
 chai.use(chaiHttp);
 
 // Initialize a new express app just for the test
-app = express();
+const app = express();
+const router = express.Router();
 app.use(bodyParser.json());
 
 describe('analysis routes', () => {
@@ -22,7 +23,7 @@ describe('analysis routes', () => {
             jobSent = true;
             cb();
         }
-    }));
+    }, router));
 
     it('should put the received job into the beanstalkd queue', (done) => {
         let newJob = {

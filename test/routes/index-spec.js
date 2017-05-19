@@ -9,9 +9,10 @@ const mocha = require('mocha'),
 chai.use(chaiHttp);
 
 // Initialize a new express app just for the test
-app = express();
+const app = express();
 app.use(bodyParser.json());
-app.use('/', index);
+const router = express.Router();
+app.use('/', index(router));
 
 describe('index route', () => {
 

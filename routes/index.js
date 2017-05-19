@@ -1,11 +1,10 @@
-const express = require('express'),
-  router = express.Router(),
-  log = require('../boot/logger');
+const log = require('../boot/logger');
 
-/* GET home page. */
-router.get('/', function (req, res, next) {
-  log.trace('GET /');
-  res.json({ message: 'health-nlp-node' })
-});
 
-module.exports = router;
+module.exports = function (router) {
+  /* GET home page. */
+  return router.get('/', function (req, res, next) {
+    log.trace('GET /');
+    res.json({ message: 'health-nlp-node' })
+  });
+};
