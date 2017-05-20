@@ -95,6 +95,19 @@ describe('twitter stream components', () => {
 
   });
 
+  it('should insert no job into the queue when the language is not English or no query has been identified', () => {
+    const event = { text: 'Some random text not containing any word from the list.', lang: 'en' },
+      beanstalkd = { put: sinon.stub() },
+      words = ['word1', 'word2'];
+    twitterStream.dataCb(beanstalkd, words)(event);
+    event.text = 'Some text containing word1 from the list';
+    event.lang = 'cn';
+    twitterStream.dataCb(beanstalkd, words)(event);
+    // No event should create a new job
+    expect(beanstalkd.put.callCount).to.eql(0);
+
+  });
+
   it('should try to parse a file that doesn\'t exist', (done) => {
     const fs = {
       readFile: (filename, cb) => {
@@ -135,6 +148,16 @@ describe('twitter stream components', () => {
       language: 'en',
       track: 'word1,word2'
     });
+  });
+
+  it('should start the twitter stream', () => {
+    const parseFileStub = sinon
+      .stub(twitterStream, 'parseFile')
+      .returns({
+        then: () => { }
+      });
+    twitterStream.runTwitterStream(null, null, null, null, null);
+    expect(parseFileStub.args[0][1]).to.contain('twitter-query-words.txt');
   });
 
 });
