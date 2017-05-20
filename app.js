@@ -5,36 +5,36 @@
 // First of all, the environment is loaded.
 const dotenv = require('dotenv');
 dotenv.load();
-
-const express = require('express'),
+// Then load dependencies for initialization
+// Boot
+const log = require('./boot/logger'),
+  config = require('./boot/configuration'),
+  fivebeans = require('fivebeans'),
+  // Connection to beanstalkd
+  beanstalkd = require('./boot/beanstalkd')
+    .init(fivebeans, config, log),
+  // App
+  express = require('express'),
   path = require('path'),
   logger = require('morgan'),
   cookieParser = require('cookie-parser'),
   bodyParser = require('body-parser'),
+  // Routes
   index = require('./routes/index'),
-  config = require('./boot/configuration'),
   analysis = require('./routes/analysis'),
-  fivebeans = require('fivebeans'),
-  log = require('./boot/logger'),
-  app = express();
+  // Other dependencies
+  Twitter = require('twitter'),
+  twitterStream = require('./boot/twitter-stream'),
+  fs = require('fs');
 
 log.trace('Start initialization.');
 log.debug('Configuration parameters: ' + JSON.stringify(config));
-// Initialize the connection with beanstalkd
-const beanstalkd = new fivebeans.client(config.beanstalkd.host, config.beanstalkd.port);
 
-beanstalkd
-  .on('connect', function () {
-    beanstalkd.use('default', function (err, name) {
-      log.info('Connected to beanstalkd: ' + config.beanstalkd.host + ':' + config.beanstalkd.port);
-    });
-  }).on('error', function (err) {
-    log.error('Error while connecting to beanstalkd: ' + config.beanstalkd.host + ':' + config.beanstalkd.port + ' ' + err);
-  })
-  .on('close', function () {
-    log.info('Connection to beanstalkd closed: ' + config.beanstalkd.host + ':' + config.beanstalkd.port);
-  })
-  .connect();
+// Initialize the express app
+const app = express();
+
+// Initialize the twitter stream
+twitterStream.runTwitterStream(Twitter, beanstalkd, fs, config, log);
 
 //CORS middleware
 var allowCrossDomain = function (req, res, next) {
@@ -64,7 +64,6 @@ app.use(function (req, res, next) {
 
 // error handler
 app.use(function (err, req, res, next) {
-  // set locals, only providing error in development
   res.locals.message = err.message;
   let returnError = process.env.NODE_ENV !== 'production';
   res.locals.error = returnError ? err : {};

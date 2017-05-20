@@ -2,47 +2,31 @@ const mocha = require('mocha'),
   chai = require('chai'),
   chaiHttp = require('chai-http'),
   expect = chai.expect,
+  sinon = require('sinon'),
+  logger = require('../boot/logger'),
+  twitterStream = require('../boot/twitter-stream'),
+  beanstalkd = require('../boot/beanstalkd'),
   mockRequire = require('mock-require');
 
 chai.use(chaiHttp);
+let app, sandbox;
+
+before(() => {
+  sandbox = sinon.sandbox.create();
+  sandbox.stub(twitterStream, 'runTwitterStream');
+  sandbox.stub(beanstalkd, 'init');
+  sandbox.stub(logger, 'trace');
+  sandbox.stub(logger, 'debug');
+  sandbox.stub(logger, 'error');
+  sandbox.stub(logger, 'warn');
+  app = require('../app');
+});
+
+after('stop mock requires', () => {
+  sandbox.restore();
+});
 
 describe('App initialization ', () => {
-  // We mock fivebeans, in order to test the connection with
-  // beanstalkd without beanstalkd
-  mockRequire('fivebeans', {
-    client: function (host, port) {
-      this.on = (event, cb) => {
-        it('beanstalkd should expect a known event',
-          () => {
-            expect(['connect', 'error', 'close']).to.contain(event);
-            expect(typeof cb).to.equal('function');
-            expect(typeof cb()).to.equal('undefined');
-          });
-        return this;
-      };
-      this.connect = () => {
-        return this;
-      };
-      this.use = (tube, cb) => {
-        expect(tube).to.equal('default');
-        expect(typeof cb).to.equal('function');
-        expect(typeof cb()).to.equal('undefined');
-      };
-      this.put = (a, b, c, d, cb) => { cb(); };
-      return this;
-    }
-  });
-
-  mockRequire('../boot/logger', {
-    trace: () => { },
-    debug: () => { },
-    info: () => { },
-    warn: () => { },
-    error: () => { }
-  });
-
-  // With a mocked instance of fivebeans and the logger
-  const app = require('../app');
 
   it('should create the app', (done) => {
     expect(app).to.be.defined;
@@ -74,9 +58,5 @@ describe('App initialization ', () => {
           done();
         });
     });
-
-  after('stop mock requires', () => {
-    mockRequire.stopAll();
-  });
 
 });
