@@ -1,11 +1,9 @@
-const log = require('../boot/logger');
-
 /**
  * An active connection to beanstalkd must be injected in order
  * to save the jobs in the jobs queue.
  * @param {Object} beanstalkd Active connection to beanstalkd, fivebeans based.
  */
-module.exports = function (beanstalkd, router) {
+module.exports = function (beanstalkd, router, log) {
   /* POST a new analysis. */
   router.post('/', function (req, res, next) {
     log.debug('POST to /analysis');

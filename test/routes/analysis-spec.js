@@ -1,6 +1,7 @@
 const mocha = require('mocha'),
     chai = require('chai'),
     chaiHttp = require('chai-http'),
+    sinon = require('sinon'),
     express = require('express'),
     bodyParser = require('body-parser'),
     expect = chai.expect,
@@ -11,6 +12,7 @@ chai.use(chaiHttp);
 // Initialize a new express app just for the test
 const app = express();
 const router = express.Router();
+const log = { trace: sinon.stub(), debug: sinon.stub(), info: sinon.stub() };
 app.use(bodyParser.json());
 
 describe('analysis routes', () => {
@@ -23,7 +25,7 @@ describe('analysis routes', () => {
             jobSent = true;
             cb();
         }
-    }, router));
+    }, router, log));
 
     it('should put the received job into the beanstalkd queue', (done) => {
         let newJob = {
