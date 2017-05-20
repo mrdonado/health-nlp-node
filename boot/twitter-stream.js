@@ -112,15 +112,15 @@ const startStream = (Twitter, beanstalkd, config, log) => {
 
 
 module.exports = {
-  runTwitterStream: (Twitter, beanstalkd, fs, config, log) => {
-    parseFile(fs, './boot/twitter-query-words.txt')
-      .then(startStream(Twitter, beanstalkd, config, log));
-  },
   startStream,
   errorCb,
   dataCb,
   parseFile,
   induceQuery,
   parseWords,
-  getTwitterClient
+  getTwitterClient,
+  runTwitterStream: function (Twitter, beanstalkd, fs, config, log) {
+    this.parseFile(fs, './boot/twitter-query-words.txt')
+      .then(this.startStream(Twitter, beanstalkd, config, log));
+  }
 };
