@@ -12,7 +12,7 @@ const log = require('./boot/logger'),
   config = require('./boot/configuration'),
   // Connection to beanstalkd
   beanstalkd = require('./boot/beanstalkd')
-    .init(require('fivebeans'), config, log),
+    .connect(require('fivebeans'), config, log),
   // App
   express = require('express'),
   path = require('path'),

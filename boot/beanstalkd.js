@@ -18,7 +18,7 @@ const onClose = (config, log) => {
   };
 };
 
-const init = function (fivebeans, config, log) {
+const connect = function (fivebeans, config, log) {
   const beanstalkd = new fivebeans
     .client(config.beanstalkd.host,
     config.beanstalkd.port);
@@ -31,4 +31,5 @@ const init = function (fivebeans, config, log) {
 
   return beanstalkd;
 };
-module.exports = { init }
+
+module.exports = { connect, onConnect, onError, onClose }
