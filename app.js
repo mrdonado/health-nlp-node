@@ -50,8 +50,8 @@ app.use(cookieParser());
 
 /** ROUTES ***************************************************************/
 app.use(express.static(path.join(__dirname, 'public')));
-app.use('/', index(router));
-app.use('/analysis', analysis(beanstalkd, router));
+app.use('/', index(router, log));
+app.use('/analysis', analysis(beanstalkd, router, log));
 
 /** ERROR HANDLERS *******************************************************/
 // catch 404 and forward to error handler

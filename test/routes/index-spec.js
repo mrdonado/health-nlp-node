@@ -1,6 +1,7 @@
 const mocha = require('mocha'),
   chai = require('chai'),
   expect = chai.expect,
+  sinon = require('sinon'),
   chaiHttp = require('chai-http'),
   express = require('express'),
   bodyParser = require('body-parser'),
@@ -8,11 +9,13 @@ const mocha = require('mocha'),
 
 chai.use(chaiHttp);
 
+const log = { trace: sinon.stub(), debug: sinon.stub(), info: sinon.stub() };
+
 // Initialize a new express app just for the test
 const app = express();
 app.use(bodyParser.json());
 const router = express.Router();
-app.use('/', index(router));
+app.use('/', index(router, log));
 
 describe('index route', () => {
 

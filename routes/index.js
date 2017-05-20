@@ -1,7 +1,4 @@
-const log = require('../boot/logger');
-
-
-module.exports = function (router) {
+module.exports = function (router, log) {
   /* GET home page. */
   return router.get('/', function (req, res, next) {
     log.trace('GET /');
