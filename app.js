@@ -2,6 +2,7 @@
  * app.js 
  * Initialize the express app.
  */
+
 // First of all, the environment is loaded.
 const dotenv = require('dotenv');
 dotenv.load();
@@ -9,10 +10,9 @@ dotenv.load();
 // Boot
 const log = require('./boot/logger'),
   config = require('./boot/configuration'),
-  fivebeans = require('fivebeans'),
   // Connection to beanstalkd
   beanstalkd = require('./boot/beanstalkd')
-    .init(fivebeans, config, log),
+    .init(require('fivebeans'), config, log),
   // App
   express = require('express'),
   path = require('path'),
@@ -20,6 +20,7 @@ const log = require('./boot/logger'),
   cookieParser = require('cookie-parser'),
   bodyParser = require('body-parser'),
   // Routes
+  router = express.Router(),
   index = require('./routes/index'),
   analysis = require('./routes/analysis'),
   // Other dependencies
@@ -33,27 +34,26 @@ log.debug('Configuration parameters: ' + JSON.stringify(config));
 // Initialize the express app
 const app = express();
 
-// Initialize the twitter stream
-twitterStream.runTwitterStream(Twitter, beanstalkd, fs, config, log);
-
-//CORS middleware
+/** MIDDLEWARE ***********************************************************/
+// CORS middleware
 var allowCrossDomain = function (req, res, next) {
   res.header('Access-Control-Allow-Origin', config.cors.allowedOrigin);
   res.header('Access-Control-Allow-Methods', 'GET,PUT,POST');
   res.header('Access-Control-Allow-Headers', 'Content-Type');
   next();
 };
-
 app.use(allowCrossDomain);
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
+
+/** ROUTES ***************************************************************/
 app.use(express.static(path.join(__dirname, 'public')));
-const router = express.Router();
 app.use('/', index(router));
 app.use('/analysis', analysis(beanstalkd, router));
 
+/** ERROR HANDLERS *******************************************************/
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
   log.warn('Catch 404 error.');
@@ -61,8 +61,6 @@ app.use(function (req, res, next) {
   err.status = 404;
   next(err);
 });
-
-// error handler
 app.use(function (err, req, res, next) {
   res.locals.message = err.message;
   let returnError = process.env.NODE_ENV !== 'production';
@@ -72,5 +70,8 @@ app.use(function (err, req, res, next) {
   res.json(res.locals.error);
   log.error('An error occurred: ' + err.message);
 });
+
+/** OTHER SERVICES *******************************************************/
+twitterStream.runTwitterStream(Twitter, beanstalkd, fs, config, log);
 
 module.exports = app;

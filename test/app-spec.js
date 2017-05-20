@@ -13,6 +13,8 @@ let app, sandbox;
 
 before(() => {
   sandbox = sinon.sandbox.create();
+  // Twitter stream and beanstalkd will be tested outside from here.
+  // We don't want them to run while testing the app inialization
   sandbox.stub(twitterStream, 'runTwitterStream');
   sandbox.stub(beanstalkd, 'init');
   sandbox.stub(logger, 'trace');
@@ -28,8 +30,10 @@ after('stop mock requires', () => {
 
 describe('App initialization ', () => {
 
-  it('should create the app', (done) => {
+  it('should create the app and initialize subcomponents', (done) => {
     expect(app).to.be.defined;
+    expect(twitterStream.runTwitterStream.called).to.be.ok;
+    expect(beanstalkd.init.called).to.be.ok;
     done();
   });
 
