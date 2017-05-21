@@ -9,27 +9,28 @@ const mocha = require('mocha'),
   mockRequire = require('mock-require');
 
 chai.use(chaiHttp);
-let app, sandbox;
-
-before(() => {
-  sandbox = sinon.sandbox.create();
-  // Twitter stream and beanstalkd will be tested outside from here.
-  // We don't want them to run while testing the app inialization
-  sandbox.stub(twitterStream, 'runTwitterStream');
-  sandbox.stub(beanstalkd, 'connect');
-  sandbox.stub(logger, 'trace');
-  sandbox.stub(logger, 'debug');
-  sandbox.stub(logger, 'error');
-  sandbox.stub(logger, 'warn');
-  app = require('../app');
-});
-
-after('stop mock requires', () => {
-  beanstalkd.connect.restore();
-  sandbox.restore();
-});
 
 describe('App initialization ', () => {
+
+  let app, sandbox;
+
+  beforeEach(() => {
+    sandbox = sinon.sandbox.create();
+    // Twitter stream and beanstalkd will be tested outside from here.
+    // We don't want them to run while testing the app inialization
+    sandbox.stub(twitterStream, 'runTwitterStream');
+    sandbox.stub(beanstalkd, 'connect');
+    sandbox.stub(logger, 'trace');
+    sandbox.stub(logger, 'debug');
+    sandbox.stub(logger, 'error');
+    sandbox.stub(logger, 'warn');
+    app = require('../app');
+  });
+
+  afterEach('stop mock requires', () => {
+    beanstalkd.connect.restore();
+    sandbox.restore();
+  });
 
   it('should create the app and initialize subcomponents', (done) => {
     expect(app).to.be.defined;
