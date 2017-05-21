@@ -55,7 +55,7 @@ You can run the tests by typing this on the console:
 
 And you can generate the coverage report with:
 
-`npm coverage`
+`npm run coverage`
 
 ## Docker
 
