@@ -104,7 +104,6 @@ const updateBuffer = (_buffer, n, message) => {
   let buffer = _buffer.slice(Math.max(_buffer.length - n + 1, 0));
   // Add the message at the end and return
   buffer.push(message);
-  console.warn(JSON.stringify(buffer, ' ', 2));
   return buffer;
 };
 
