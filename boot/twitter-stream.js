@@ -2,6 +2,10 @@
  * Given the twitter constructor (see module 'twitter') and the
  * configuration parameters, it returns a twitter client object,
  * that can be directly used to interact with the twitter API.
+ * @param {function} Constructor obtained from the 'twitter'
+ * module.
+ * @param {Object} Configuration obtained from the ./boot/configuration.js module
+ * @returns {Object} The client twitter instance
  */
 const getTwitterClient = (Twitter, config) => {
   return new Twitter({
@@ -15,6 +19,9 @@ const getTwitterClient = (Twitter, config) => {
 /**
  * The words coming from a file are turned into an array
  * by splitting on every new line.
+ * @param {string} data read from a file
+ * @return {string[]} array containing the lines of data on each
+ * element.
  */
 const parseWords = (data) => {
   return data.toString().split('\n');
@@ -54,6 +61,54 @@ const parseFile = (fs, wordsFileName) => {
 };
 
 /**
+ * It returns a processed version of the input message, in order
+ * to ease the comparison between messages that are equivalent.
+ * @param {string} _message
+ * @returns {string} processed message
+ */
+const processedMessage = (_message) => {
+  // Convert the message to lower case
+  let message = _message.toLowerCase();
+  // Trim
+  message = message.trim();
+  // Remove any url
+  message = message.replace(/(?:https?|ftp):\/\/[\n\S]+/g, '');
+  // Remove excess of spaces in between
+  message = message.replace(/[\t\s]{2,}/g, ' ');
+  return message;
+};
+
+/**
+ * It returns a boolean telling if an equivalent message to the
+ * one passed by parameter is present into the given buffer.
+ * @param {string[]} buffer with previous messages
+ * @param {string} message to be compared
+ * @returns {boolean} true when an equivalent message has been
+ * found into the buffer
+ */
+const repeatedMessage = (buffer, message) => {
+  return buffer.indexOf(processedMessage(message)) > -1;
+};
+
+/**
+ * It returns a new updated buffer with the specified message on
+ * top of it. The maximum buffer size will be of n messages.
+ * If the specified buffer already has n elements, the oldest
+ * one will be discarded.
+ * @param {string[]} buffer
+ * @param {number} desired maximum length
+ * @returns {string[]} new buffer
+ */
+const updateBuffer = (_buffer, n, message) => {
+  // Get a copy of the buffer with a max of n elements
+  let buffer = _buffer.slice(Math.max(_buffer.length - n + 1, 0));
+  // Add the message at the end and return
+  buffer.push(message);
+  console.warn(JSON.stringify(buffer, ' ', 2));
+  return buffer;
+};
+
+/**
  * Callback for the twitter stream when data are coming in.
  * 
  * This is a high order function. First configure it with an instance
@@ -67,11 +122,19 @@ const parseFile = (fs, wordsFileName) => {
  * job for the analyzer.
  */
 const dataCb = (beanstalkd, words) => {
+  // A buffer will store the last messages in order to track
+  // them and thus be able to avoid analyzing the same
+  // message twice
+  let buffer = [];
   return (event) => {
     const query = induceQuery(event.text, words);
-    if (query === '' || event.lang !== 'en') {
+    if (query === ''
+      || event.lang !== 'en'
+      || repeatedMessage(buffer, event.text)) {
+      // Message not relevant. Finish here.
       return;
     }
+    buffer = updateBuffer(buffer, 1000, event.text);
     const job = {
       'user_name': event.user.screen_name,
       'user_description': event.user.description,
@@ -113,6 +176,9 @@ const startStream = (Twitter, beanstalkd, config, log) => {
 
 module.exports = {
   startStream,
+  processedMessage,
+  repeatedMessage,
+  updateBuffer,
   errorCb,
   dataCb,
   parseFile,

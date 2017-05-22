@@ -160,4 +160,38 @@ describe('twitter stream components', () => {
     expect(parseFileStub.args[0][1]).to.contain('twitter-query-words.txt');
   });
 
+  it('should process messages removing urls and setting them to lowercase for later comparison', () => {
+    expect(twitterStream
+      .processedMessage('Some MESSAGE '))
+      .to.eql('some message');
+    expect(twitterStream
+      .processedMessage('message with url http://www.google.com/asfd in between'))
+      .to.eql('message with url in between');
+  });
+
+  it('should identify when a specified message already has an equivalent one into the buffer', () => {
+    expect(twitterStream
+      .repeatedMessage(['sdafsafd', 'some message'], 'some MESSAGE'))
+      .to.be.ok;
+
+    expect(twitterStream
+      .repeatedMessage(['sdafsafd', 'some message'], 'some https://asdfasdf.fdsf/asdfa MESSAGE'))
+      .to.be.ok;
+
+    expect(twitterStream
+      .repeatedMessage(['sdafsafd', 'bla bla bla'], 'some https://asdfasdf.fdsf/asdfa MESSAGE'))
+      .not.to.be.ok;
+  });
+
+  it('should extend the buffer to a maximum of n elements',
+    () => {
+      expect(twitterStream
+        .updateBuffer(['asdf', 'asdf2', 'asdf3'], 3, 'some message')).to.eql(['asdf2', 'asdf3', 'some message']);
+
+      expect(twitterStream
+        .updateBuffer([], 3, 'some message')).to.eql(['some message']);
+
+    });
+
+
 });
