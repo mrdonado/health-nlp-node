@@ -69,12 +69,12 @@ const parseFile = (fs, wordsFileName) => {
 const processedMessage = (_message) => {
   // Convert the message to lower case
   let message = _message.toLowerCase();
-  // Trim
-  message = message.trim();
   // Remove any url
   message = message.replace(/(?:https?|ftp):\/\/[\n\S]+/g, '');
   // Remove excess of spaces in between
   message = message.replace(/[\t\s]{2,}/g, ' ');
+  // Trim
+  message = message.trim();
   return message;
 };
 

@@ -127,6 +127,10 @@ describe('twitter stream components', () => {
     dataCb(event);
     event.text = 'A MESSAGE containing word1  ';
     dataCb(event);
+    event.text = 'A MESSAGE containing word1 http://someurl.com/asdfa ';
+    dataCb(event);
+    event.text = '   A     https://asdfasdf.asdf/asdfasdf MESSAGE CONTAINING    word1 http://asdfafsdf/fssfd    ';
+    dataCb(event);
     // Only one job should be created.
     expect(beanstalkd.put.callCount).to.eql(1);
   });
