@@ -96,16 +96,39 @@ describe('twitter stream components', () => {
   });
 
   it('should insert no job into the queue when the language is not English or no query has been identified', () => {
-    const event = { text: 'Some random text not containing any word from the list.', lang: 'en' },
+    const event = {
+      text: 'Some random text not containing any word from the list.',
+      lang: 'en'
+    },
       beanstalkd = { put: sinon.stub() },
-      words = ['word1', 'word2'];
-    twitterStream.dataCb(beanstalkd, words)(event);
+      words = ['word1', 'word2'],
+      dataCb = twitterStream.dataCb(beanstalkd, words);
+
+    dataCb(event);
     event.text = 'Some text containing word1 from the list';
     event.lang = 'cn';
     twitterStream.dataCb(beanstalkd, words)(event);
     // No event should create a new job
     expect(beanstalkd.put.callCount).to.eql(0);
+  });
 
+  it('should not process the same message twice', () => {
+    const event = {
+      text: 'A message containing word1',
+      lang: 'en',
+      user: {
+        description: 'your worst enemy',
+        screen_name: 'who cares'
+      }
+    },
+      beanstalkd = { put: sinon.stub() },
+      words = ['word1', 'word2'],
+      dataCb = twitterStream.dataCb(beanstalkd, words);
+    dataCb(event);
+    event.text = 'A MESSAGE containing word1  ';
+    dataCb(event);
+    // Only one job should be created.
+    expect(beanstalkd.put.callCount).to.eql(1);
   });
 
   it('should try to parse a file that doesn\'t exist', (done) => {
@@ -190,8 +213,17 @@ describe('twitter stream components', () => {
 
       expect(twitterStream
         .updateBuffer([], 3, 'some message')).to.eql(['some message']);
-
     });
+
+  it('should move the equivalent message in the buffer to the last position', () => {
+    const buffer = ['some message', 'other message', 'a new message here'];
+    expect(twitterStream
+      .messageToTop(buffer, ' some  MESSAGE'))
+      .to.eql(['other message', 'a new message here', 'some message']);
+    expect(twitterStream
+      .messageToTop(buffer, 'unrelated message'))
+      .to.eql(buffer);
+  });
 
 
 });

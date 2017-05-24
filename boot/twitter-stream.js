@@ -30,8 +30,8 @@ const parseWords = (data) => {
 /**
  * It obtains longest word of the words array that is present
  * into the text.
- * @param text:string
- * @param words: string[]
+ * @param {string} text
+ * @param {string[]} words
  * @returns word:string the longest matching word or an empty
  * character if no match has been found.
  */
@@ -91,8 +91,31 @@ const repeatedMessage = (buffer, message) => {
 };
 
 /**
- * It returns a new updated buffer with the specified message on
- * top of it. The maximum buffer size will be of n messages.
+ * If the equivalent message to the message input is present
+ * in the _buffer array, a copy of _buffer will be returned
+ * where the equivalent message has been moved to the last
+ * element.
+ * @param {string[]} _buffer
+ * @param {string} message
+ * @returns {string[]} updated buffer
+ */
+const messageToTop = (_buffer, message) => {
+  const pmessage = processedMessage(message);
+  // If there is no equivalent message, the input buffer
+  // is returned
+  if (!repeatedMessage(_buffer, message)) {
+    return _buffer;
+  }
+  let buffer = _buffer.slice(); // copy the buffer
+  buffer.splice(buffer.indexOf(pmessage), 1);
+  buffer.push(pmessage);
+  return buffer;
+};
+
+/**
+ * It returns a new updated buffer with a proccessed version of
+ * the specified message on top of it. The maximum buffer size
+ * will be of n messages.
  * If the specified buffer already has n elements, the oldest
  * one will be discarded.
  * @param {string[]} buffer
@@ -103,7 +126,7 @@ const updateBuffer = (_buffer, n, message) => {
   // Get a copy of the buffer with a max of n elements
   let buffer = _buffer.slice(Math.max(_buffer.length - n + 1, 0));
   // Add the message at the end and return
-  buffer.push(message);
+  buffer.push(processedMessage(message));
   return buffer;
 };
 
@@ -128,9 +151,13 @@ const dataCb = (beanstalkd, words) => {
   return (event) => {
     const query = induceQuery(event.text, words);
     if (query === ''
-      || event.lang !== 'en'
-      || repeatedMessage(buffer, event.text)) {
+      || event.lang !== 'en') {
       // Message not relevant. Finish here.
+      return;
+    } else if (repeatedMessage(buffer, event.text)) {
+      // Repeated message. Probably spam. We update the buffer
+      // with this message on the top.
+      buffer = messageToTop(buffer, event.text);
       return;
     }
     buffer = updateBuffer(buffer, 1000, event.text);
@@ -178,6 +205,7 @@ module.exports = {
   processedMessage,
   repeatedMessage,
   updateBuffer,
+  messageToTop,
   errorCb,
   dataCb,
   parseFile,
