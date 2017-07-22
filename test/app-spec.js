@@ -5,8 +5,7 @@ const mocha = require('mocha'),
   sinon = require('sinon'),
   logger = require('../boot/logger'),
   twitterStream = require('../boot/twitter-stream'),
-  beanstalkd = require('../boot/beanstalkd'),
-  mockRequire = require('mock-require');
+  beanstalkd = require('../boot/beanstalkd');
 
 chai.use(chaiHttp);
 
