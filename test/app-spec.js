@@ -1,5 +1,4 @@
-const mocha = require('mocha'),
-  chai = require('chai'),
+const chai = require('chai'),
   chaiHttp = require('chai-http'),
   expect = chai.expect,
   sinon = require('sinon'),
