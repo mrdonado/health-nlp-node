@@ -1,12 +1,10 @@
-const mocha = require('mocha'),
-  chai = require('chai'),
+const chai = require('chai'),
   chaiHttp = require('chai-http'),
   expect = chai.expect,
   sinon = require('sinon'),
   logger = require('../boot/logger'),
   twitterStream = require('../boot/twitter-stream'),
-  beanstalkd = require('../boot/beanstalkd'),
-  mockRequire = require('mock-require');
+  beanstalkd = require('../boot/beanstalkd');
 
 chai.use(chaiHttp);
 
@@ -33,7 +31,7 @@ describe('App initialization ', () => {
   });
 
   it('should create the app and initialize subcomponents', (done) => {
-    expect(app).to.be.defined;
+    expect(app).to.be.ok;
     expect(twitterStream.runTwitterStream.called).to.be.ok;
     expect(beanstalkd.connect.called).to.be.ok;
     done();
