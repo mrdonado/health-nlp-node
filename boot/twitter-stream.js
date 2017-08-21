@@ -150,10 +150,8 @@ const dataCb = (beanstalkd, words) => {
   let buffer = [];
   return (event) => {
     const query = induceQuery(event.text, words);
-    if (event.text.indexOf('class \'TypeError') > -1) {
-      return;
-    }
     if (query === ''
+      || event.text.indexOf('class \'TypeError') > -1
       || event.lang !== 'en') {
       // Message not relevant. Finish here.
       return;
@@ -166,15 +164,15 @@ const dataCb = (beanstalkd, words) => {
     if (event.user.description === null || event.text === null || event.user.screen_name === null) {
       return;
     }
-    console.log(event.text);
+    //console.log(event.text);
     buffer = updateBuffer(buffer, 1000, event.text);
     const job = {
-      'user_name': event.user.screen_name.replace(/[^a-zA-Z0-9.; ]/g, ""),
+      'user_name': event.user.screen_name || '',
 
-      'user_description': event.user.description.replace(/[^a-zA-Z0-9.; ]/g, ""),
+      'user_description': event.user.description || '',
 
       'created_at': (new Date()).toISOString(),
-      'message': event.text.replace(/[^a-zA-Z0-9.; ]/g, ""),
+      'message': event.text || '',
       'source': 'twitter',
       'query': query
     };
@@ -200,7 +198,7 @@ const startStream = (Twitter, beanstalkd, config, log) => {
     const client = getTwitterClient(Twitter, config);
     const stream = client.stream('statuses/filter', {
       track: words.join(','),
-      //      filter_level: 'low',
+      filter_level: 'none',
       language: 'en'
     });
     stream.on('data', dataCb(beanstalkd, words));
