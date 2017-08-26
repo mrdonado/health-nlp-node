@@ -150,9 +150,10 @@ const dataCb = (beanstalkd, words) => {
   let buffer = [];
   return (event) => {
     const query = induceQuery(event.text, words);
-    if (query === ''
-      || event.text.indexOf('class \'TypeError') > -1
-      || event.lang !== 'en') {
+    if (query === '' ||
+      typeof event.text === 'undefined' ||
+      event.text.indexOf('class \'TypeError') > -1 ||
+      event.lang !== 'en') {
       // Message not relevant. Finish here.
       return;
     } else if (repeatedMessage(buffer, event.text)) {
