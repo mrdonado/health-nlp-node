@@ -171,7 +171,7 @@ describe('twitter stream components', () => {
     twitterStream.startStream(Twitter, null, { twitter: {} }, null)(['word1', 'word2']);
     expect(mode).to.eql('statuses/filter');
     expect(config).to.eql({
-//      filter_level: 'low',
+      filter_level: 'none',
       language: 'en',
       track: 'word1,word2'
     });
