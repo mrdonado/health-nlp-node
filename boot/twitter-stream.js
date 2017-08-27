@@ -36,6 +36,9 @@ const parseWords = (data) => {
  * character if no match has been found.
  */
 const induceQuery = (text, words) => {
+  if(typeof text === 'undefined'){
+    return '';
+  }
   return words.reduce((q, word) => {
     if (text.indexOf(word) > -1 && word.length > q.length) {
       return word;
@@ -151,7 +154,6 @@ const dataCb = (beanstalkd, words) => {
   return (event) => {
     const query = induceQuery(event.text, words);
     if (query === '' ||
-      typeof event.text === 'undefined' ||
       event.text.indexOf('class \'TypeError') > -1 ||
       event.lang !== 'en') {
       // Message not relevant. Finish here.
