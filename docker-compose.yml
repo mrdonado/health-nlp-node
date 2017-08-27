@@ -7,14 +7,24 @@ services:
       - .:/usr/src/app
       - /usr/src/app/node_modules
     ports:
-      - "3000:3000"
+      - "127.0.0.1:3000:80"
     environment:
+      - VIRTUAL_HOST=health-nlp.api.jdonado.com
+      - LETSENCRYPT_EMAIL=jdonado@jdonado.com
+      - LETSENCRYPT_HOST=health-nlp.api.jdonado.com
       - BEANSTALKD_HOST=beanstalksvc
+      - PORT=80
       - NODE_ENV=production
     networks:
       - health-nlp-network
+      - jdonado-nw
+    expose:
+      - 8888
 
 networks:
+  jdonado-nw:
+    external:
+      name: jdonado-nw
   health-nlp-network:
     external:
       name: health-nlp-network 
