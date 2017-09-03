@@ -1,3 +1,5 @@
+let timestamp = 0;
+
 /**
  * Given the twitter constructor (see module 'twitter') and the
  * configuration parameters, it returns a twitter client object,
@@ -36,7 +38,7 @@ const parseWords = (data) => {
  * character if no match has been found.
  */
 const induceQuery = (text, words) => {
-  if(typeof text === 'undefined'){
+  if (typeof text === 'undefined') {
     return '';
   }
   return words.reduce((q, word) => {
@@ -152,6 +154,8 @@ const dataCb = (beanstalkd, words) => {
   // message twice
   let buffer = [];
   return (event) => {
+    // Update the timestamp every time new data are received
+    timestamp = (new Date()).getTime();
     const query = induceQuery(event.text, words);
     if (query === '' ||
       event.text.indexOf('class \'TypeError') > -1 ||
@@ -225,5 +229,9 @@ module.exports = {
   runTwitterStream: function (Twitter, beanstalkd, fs, config, log) {
     this.parseFile(fs, './boot/twitter-query-words.txt')
       .then(this.startStream(Twitter, beanstalkd, config, log));
+  },
+  getTimestamp: function () {
+    return timestamp;
   }
+
 };
