@@ -73,5 +73,17 @@ app.use(function (err, req, res, next) {
 
 /** OTHER SERVICES *******************************************************/
 twitterStream.runTwitterStream(Twitter, beanstalkd, fs, config, log);
+// Check the stream's activity every 10s.
+// If the inactivity is longer than 15s, restart.
+if (process.env.NODE_ENV !== 'test') {
+  setInterval(() => {
+    let inactivity = (new Date()).getTime() - twitterStream.getTimestamp();
+    if (inactivity > 15000) {
+      log.warn('Inactivity detected on twitter stream. Attempting to restart.');
+      twitterStream.runTwitterStream(Twitter, beanstalkd, fs, config, log);
+    }
+  }, 10000);
+}
+
 
 module.exports = app;
