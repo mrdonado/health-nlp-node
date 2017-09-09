@@ -16,6 +16,18 @@ let configuration = {
         accessTokenKey: process.env.ACCESS_TOKEN_KEY,
         accessTokenSecret: process.env.ACCESS_TOKEN_SECRET
     },
+    firebase: {
+        config: {
+            apiKey: process.env.FB_API_KEY,
+            authDomain: process.env.FB_AUTH_DOMAIN,
+            databaseURL: process.env.FB_DATABASE_URL,
+            storageBucket: process.env.FB_STORAGE_BUCKET
+        },
+        user: {
+            email: process.env.FB_EMAIL,
+            password: process.env.FB_PASSWORD
+        }
+    },
     errorLevel: process.env.ERROR_LEVEL || 'trace'
 };
 
