@@ -1,22 +1,11 @@
 let app = null;
 
-const disconnectAfter = (time) => {
-  setTimeout(() => {
-    if (app) {
-      app
-        .database()
-        .goOffline();
-    }
-  }, time);
-
-};
-
 module.exports = (config, firebase) => ({
   clean: () => {
     // Connect to firebase
-    app = firebase.initializeApp(config.firebase.config);
-    // After 10s, disconnect from firebase.
-    disconnectAfter(10000);
+    if (app === null) {
+      app = firebase.initializeApp(config.firebase.config);
+    }
     app.auth().signInWithEmailAndPassword(config.firebase.user.email, config.firebase.user.password)
       .then((user) => {
         // Query: all messages older than 3 hours
