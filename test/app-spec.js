@@ -32,7 +32,6 @@ describe('App initialization ', () => {
 
   it('should create the app and initialize subcomponents', (done) => {
     expect(app).to.be.ok;
-    expect(twitterStream.runTwitterStream.called).to.be.ok;
     expect(beanstalkd.connect.called).to.be.ok;
     done();
   });
