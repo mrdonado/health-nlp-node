@@ -26,6 +26,8 @@ const log = require('./boot/logger'),
   // Other dependencies
   Twitter = require('twitter'),
   twitterStream = require('./boot/twitter-stream'),
+  firebase = require('firebase'),
+  fbCleaner = require('./boot/firebase-cleaner')(config, firebase),
   fs = require('fs');
 
 log.trace('Start initialization.');
@@ -71,11 +73,17 @@ app.use(function (err, req, res, next) {
   log.error('An error occurred: ' + err.message);
 });
 
-/** OTHER SERVICES *******************************************************/
-twitterStream.runTwitterStream(Twitter, beanstalkd, fs, config, log);
-// Check the stream's activity every 50s.
-// If the inactivity is longer than 2m, restart.
+//--- OTHER SERVICES: Twitter & Firebase cronjobs ----------------------//
 if (process.env.NODE_ENV !== 'test') {
+  fbCleaner.clean();
+  // Clean older messages from firebase every two hours.
+  setInterval(() => {
+    fbCleaner.clean();
+  }, 2 * 60 * 60 * 1000);
+
+  twitterStream.runTwitterStream(Twitter, beanstalkd, fs, config, log);
+  // Check the stream's activity every 50s.
+  // If the inactivity is longer than 2m, restart.
   setInterval(() => {
     let inactivity = (new Date()).getTime() - twitterStream.getTimestamp();
     if (inactivity > 120000) {
