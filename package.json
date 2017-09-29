@@ -11,27 +11,27 @@
     "coveralls": "cat ./coverage/lcov.info | node node_modules/.bin/coveralls"
   },
   "dependencies": {
-    "body-parser": "~1.17.1",
+    "body-parser": "~1.18.2",
     "cookie-parser": "~1.4.3",
-    "debug": "~2.6.3",
+    "debug": "~3.1.0",
     "dotenv": "^4.0.0",
-    "express": "~4.15.2",
-    "firebase": "^4.3.1",
+    "express": "~4.16.0",
+    "firebase": "^4.4.0",
     "fivebeans": "^1.5.0",
     "log4js": "^1.1.1",
-    "morgan": "~1.8.1",
-    "serve-favicon": "~2.4.2",
-    "twitter": "^1.7.0"
+    "morgan": "~1.9.0",
+    "serve-favicon": "~2.4.5",
+    "twitter": "^1.7.1"
   },
   "devDependencies": {
     "chai": "^4.0.2",
     "chai-http": "^3.0.0",
-    "coveralls": "^2.13.0",
+    "coveralls": "^3.0.0",
     "istanbul": "^0.4.5",
-    "mocha": "^3.4.1",
+    "mocha": "^3.5.3",
     "mock-require": "^2.0.2",
-    "pm2": "^2.4.6",
-    "sinon": "^2.2.0",
+    "pm2": "^2.7.1",
+    "sinon": "^4.0.0",
     "supertest": "^3.0.0"
   }
 }
