@@ -9,10 +9,10 @@ module.exports = (config, firebase) => ({
     app.auth().signInWithEmailAndPassword(config.firebase.user.email, config.firebase.user.password)
       .then((user) => {
         // Query: all messages older than 3 hours
-        var ref = app.database().ref('/analysis');
-        var now = Date.now();
-        var cutoff = now - 3 * 60 * 60 * 1000;
-        var isoDate = (new Date(cutoff)).toISOString();
+        let ref = app.database().ref('/analysis'),
+          now = Date.now(),
+          cutoff = now - 3 * 60 * 60 * 1000,
+          isoDate = (new Date(cutoff)).toISOString();
         // Remove old messages
         ref.orderByChild('created_at')
           .endAt(isoDate)
